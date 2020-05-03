@@ -14,6 +14,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function index(object, path, value) {
+  var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
   if (path === null) {
     return object;
   }
@@ -22,26 +24,42 @@ function index(object, path, value) {
   var currentObject = object;
   var n = 0;
 
-  for (n; n < keys.length - 1; n += 1) {
-    if (_typeof(currentObject[keys[n]]) !== 'object' && !Array.isArray(currentObject[keys[n]])) {
-      return object;
-    }
+  if (!options && options.createUndefined) {
+    for (n; n < keys.length - 1; n += 1) {
+      if (_typeof(currentObject[keys[n]]) !== 'object' && !Array.isArray(currentObject[keys[n]])) {
+        return object;
+      }
 
-    currentObject = currentObject[keys[n]];
+      currentObject = currentObject[keys[n]];
+    }
   }
 
   var output = _objectSpread({}, object);
 
   currentObject = output;
+  var key;
 
   for (n = 0; n < keys.length - 1; n += 1) {
-    if (Array.isArray(currentObject[keys[n]])) {
-      currentObject[keys[n]] = currentObject[keys[n]].slice();
+    key = keys[n];
+    var nextObject = currentObject[key];
+
+    if (Array.isArray(nextObject)) {
+      currentObject[key] = nextObject.slice();
+    } else if (_typeof(nextObject) === 'object') {
+      currentObject[key] = _objectSpread({}, nextObject);
+    } else if (options.createUndefined) {
+      if (!Number.isNaN(+keys[n + 1])) {
+        currentObject[key] = [];
+      } else if (Array.isArray(currentObject)) {
+        currentObject.push({});
+      } else {
+        currentObject[key] = {};
+      }
     } else {
-      currentObject[keys[n]] = _objectSpread({}, currentObject[keys[n]]);
+      return object;
     }
 
-    currentObject = currentObject[keys[n]];
+    currentObject = currentObject[key];
   }
 
   currentObject[keys[n]] = value;

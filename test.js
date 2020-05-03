@@ -13,6 +13,40 @@ const object = {
     ]}
 }
 
+const aaa = {
+    product:{
+        options:{
+            moProductBalance:{
+                store:{
+                    fromUserToStore:[
+                        {
+                            separateCredit: 'user_id',
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}
+
+it('Должен создаться новый объект с двумя вложенными массивами', () => {
+    const obj = {}
+    //const result = index(obj, 'product.options.moBalanceConfig.store.fromUserToStore.0.separateCredit', 27,
+    const result = index(obj, 'firstKey.0.0.secondKey.thirdKey', 27,
+        {createUndefined:true});
+    chai.expect(result).to.deep.equal({firstKey:[[{secondKey:{thirdKey:27}}]]})
+    chai.expect(result).not.equal(obj);
+});
+
+it('Должен создаться новый объект с массивом', () => {
+    const obj = {}
+    const result = index(obj, 'firstKey.0.secondKey', 27,
+        {createUndefined:true});
+    chai.expect(result).to.deep.equal({firstKey:[{secondKey:27}]})
+    chai.expect(result).not.equal(obj);
+});
+
+
 it('Должен измениться объект и все объекты по пути', () => {
     const result = index(object, 'firstKey.secondKey.3.thirdKey', 27);
     chai.expect(result).not.equal(object)

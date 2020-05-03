@@ -1,6 +1,6 @@
 {
   "name": "change-nested-param",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "repository": "https://github.com/barmaleeo/change-nested-param.git",
   "main": "lib/index.js",
