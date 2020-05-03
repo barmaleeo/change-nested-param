@@ -1,0 +1,22 @@
+{
+  "name": "change-nested-param",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -r esm"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
+    "@babel/register": "^7.9.0",
+    "chai": "^4.2.0",
+    "esm": "^3.2.25",
+    "esp": "^0.1.16",
+    "mocha": "^7.1.2"
+  }
+}
