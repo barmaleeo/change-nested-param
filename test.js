@@ -1,4 +1,4 @@
-import {changeNestedParams} from "./lib/cange-nested-params";
+import index from "./src";
 
 const chai = require('chai');
 
@@ -14,7 +14,7 @@ const object = {
 }
 
 it('Должен измениться объект и все объекты по пути', () => {
-    const result = changeNestedParams(object, 'firstKey.secondKey.3.thirdKey', 27);
+    const result = index(object, 'firstKey.secondKey.3.thirdKey', 27);
     chai.expect(result).not.equal(object)
     chai.expect(result.stableKey.secondStableKey).equal(object.stableKey.secondStableKey)
     chai.expect(result.stableKey).equal(object.stableKey)
@@ -29,7 +29,7 @@ it('Должен измениться объект и все объекты по
 
 it('Должен измениться существующий ключ', () => {
     const obj = JSON.parse(JSON.stringify(object))
-    const result = changeNestedParams(obj, 'firstKey.secondKey.3.thirdKey', 27);
+    const result = index(obj, 'firstKey.secondKey.3.thirdKey', 27);
     chai.expect(result.firstKey.secondKey[3]).to.deep.equal({thirdKey:27, b:44, c:43})
     const obj1 = JSON.parse(JSON.stringify(object))
 
@@ -39,7 +39,7 @@ it('Должен измениться существующий ключ', () => 
 
 it('вылетает при неправильном первом ключе', () => {
     const obj = JSON.parse(JSON.stringify(object))
-    const result = changeNestedParams(obj, 'firstkey.secondKey.4.thirdKey', 27);
+    const result = index(obj, 'firstkey.secondKey.4.thirdKey', 27);
     chai.expect(result).to.deep.equal(obj);
     chai.expect(result).to.deep.equal(object);
     chai.expect(result).equal(obj);
@@ -47,7 +47,7 @@ it('вылетает при неправильном первом ключе', (
 
 it('вылетает без ключа', () => {
     const obj = JSON.parse(JSON.stringify(object))
-    const result = changeNestedParams(obj, null, 27);
+    const result = index(obj, null, 27);
     chai.expect(result).equal(obj);
     chai.expect(result).to.deep.equal(obj);
     chai.expect(result).to.deep.equal(object);
