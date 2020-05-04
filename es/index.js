@@ -23,29 +23,48 @@ function index(object, path, value) {
   var keys = path.toString().split('.');
   var currentObject = object;
   var n = 0;
+  var key;
 
-  if (!options && options.createUndefined) {
+  if (!options || !options.createUndefined) {
     for (n; n < keys.length - 1; n += 1) {
-      if (_typeof(currentObject[keys[n]]) !== 'object' && !Array.isArray(currentObject[keys[n]])) {
+      key = keys[n];
+
+      if (_typeof(currentObject[key]) !== 'object' && !Array.isArray(currentObject[key])) {
         return object;
       }
 
-      currentObject = currentObject[keys[n]];
+      currentObject = currentObject[key];
     }
   }
 
   var output = _objectSpread({}, object);
 
   currentObject = output;
-  var key;
+  var minus = false;
 
   for (n = 0; n < keys.length - 1; n += 1) {
     key = keys[n];
+
+    if (key.substring(0, 1) === '-') {
+      minus = true;
+      key = key.substring(1);
+    }
+
     var nextObject = currentObject[key];
 
     if (Array.isArray(nextObject)) {
+      if (minus) {
+        currentObject.splice(key, 1);
+        return output;
+      }
+
       currentObject[key] = nextObject.slice();
     } else if (_typeof(nextObject) === 'object') {
+      if (minus) {
+        currentObject[key] = undefined;
+        return output;
+      }
+
       currentObject[key] = _objectSpread({}, nextObject);
     } else if (options.createUndefined) {
       if (!Number.isNaN(+keys[n + 1])) {
@@ -62,6 +81,32 @@ function index(object, path, value) {
     currentObject = currentObject[key];
   }
 
-  currentObject[keys[n]] = value;
+  key = keys[n];
+
+  if (key.substring(0, 1) === '-') {
+    minus = true;
+    key = key.substring(1);
+  }
+
+  if (Array.isArray(currentObject)) {
+    if (minus) {
+      if (currentObject[key] === undefined) {
+        return object;
+      }
+
+      currentObject.splice(key, 1);
+    } else if (key === '*') {
+      currentObject.unshift(value);
+    } else if (currentObject[key] === undefined) {
+      currentObject.push(value);
+    } else {
+      currentObject[key] = value;
+    }
+  } else if (minus) {
+    currentObject[key] = undefined;
+  } else {
+    currentObject[key] = value;
+  }
+
   return output;
 }

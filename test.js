@@ -28,10 +28,92 @@ const aaa = {
         }
     }
 }
+it('Должен удалиться объект с указанным индексом в массиве', () => {
+    let obj = {firstKey:[[
+            {
+                deletingInnerContent:39}
+        ], [
+            {
+                secondKey:[{thirdKey:31},{thirdKey:27},{thirdKey:43}],
+                immutableKey:[{thirdKey:45},{thirdKey:22},{thirdKey:12}],
+            }
+        ]
+        ]}
+    let result = index(obj, 'firstKey.-0.0.-secondKey', null,
+        {createUndefined: true});
+    chai.expect(result).to.deep.equal({firstKey:[[
+            {
+                secondKey:[{thirdKey:31},{thirdKey:27},{thirdKey:43}],
+                immutableKey:[{thirdKey:45},{thirdKey:22},{thirdKey:12}],
+            }
+        ]]})
+
+
+    chai.expect(result).not.equal(obj);
+
+
+    result = index(obj, 'firstKey.-1.0.-secondKey', null,
+        {createUndefined: true});
+    chai.expect(result).to.deep.equal({firstKey:[[{deletingInnerContent:39}]
+        ]})
+
+    chai.expect(result).not.equal(obj);
+
+    result = index(obj, 'firstKey.-1', null,
+        {createUndefined: true});
+    chai.expect(result).to.deep.equal({firstKey:[[{deletingInnerContent:39}]
+        ]})
+
+    chai.expect(result).not.equal(obj);
+
+})
+it('Не должен удаляться объект с указанным индексом если индекс за массивом', () => {
+    let obj = {firstKey:[[{secondKey:[{thirdKey:31},{thirdKey:27},{thirdKey:43}]}]]}
+    let result = index(obj, 'firstKey.0.0.secondKey.-10', null,
+        {createUndefined: true});
+    chai.expect(result).equal(obj);
+
+})
+
+it('Должен удаляться объект с указанным индексом из массива с в конце', () => {
+    let obj = {firstKey:[[{secondKey:[{thirdKey:31},{thirdKey:27},{thirdKey:43}]}]]}
+    let result = index(obj, 'firstKey.0.0.secondKey.-1', null,
+        {createUndefined: true});
+    chai.expect(result).to.deep.equal({firstKey:[[{secondKey:[{thirdKey:31},{thirdKey:43}]}]]})
+    chai.expect(result).not.equal(obj);
+
+    obj = {firstKey:[[{secondKey:[{thirdKey:31},{thirdKey:27},{thirdKey:43}]}]]}
+    result = index(obj, 'firstKey.0.0.secondKey.-0', null,
+        {createUndefined: true});
+    chai.expect(result).to.deep.equal({firstKey:[[{secondKey:[{thirdKey:27},{thirdKey:43}]}]]})
+    chai.expect(result).not.equal(obj);
+})
+
+
+it('Должен создаться новый объект с двумя вложенными массивами и массивом в конце', () => {
+    const obj = {}
+    const result = index(obj, 'firstKey.0.0.secondKey.2', {thirdKey:27},
+        {createUndefined:true});
+    chai.expect(result).to.deep.equal({firstKey:[[{secondKey:[{thirdKey:27}]}]]})
+    chai.expect(result).not.equal(obj);
+    const resultInsertBefore = index(result, 'firstKey.0.0.secondKey.*', {thirdKey:31},
+        {createUndefined:true});
+    chai.expect(resultInsertBefore).to.deep.equal({firstKey:[[{secondKey:[{thirdKey:31},{thirdKey:27}]}]]})
+    chai.expect(resultInsertBefore).not.equal(result);
+
+    const resultInsertAfter = index(resultInsertBefore, 'firstKey.0.0.secondKey.5', {thirdKey:43},
+        {createUndefined:true});
+    chai.expect(resultInsertAfter).to.deep.equal({firstKey:[[{secondKey:[{thirdKey:31},{thirdKey:27},{thirdKey:43}]}]]})
+    chai.expect(resultInsertAfter).not.equal(resultInsertBefore);
+
+    const resultReplace = index(resultInsertAfter, 'firstKey.0.0.secondKey.1', {thirdKey:58},
+        {createUndefined:true});
+    chai.expect(resultReplace).to.deep.equal({firstKey:[[{secondKey:[{thirdKey:31},{thirdKey:58},{thirdKey:43}]}]]})
+    chai.expect(resultReplace).not.equal(resultInsertAfter);
+});
 
 it('Должен создаться новый объект с двумя вложенными массивами', () => {
     const obj = {}
-    //const result = index(obj, 'product.options.moBalanceConfig.store.fromUserToStore.0.separateCredit', 27,
     const result = index(obj, 'firstKey.0.0.secondKey.thirdKey', 27,
         {createUndefined:true});
     chai.expect(result).to.deep.equal({firstKey:[[{secondKey:{thirdKey:27}}]]})
