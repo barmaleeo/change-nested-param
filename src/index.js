@@ -39,19 +39,21 @@ export default function index(object, path, value, options = {}){
                 currentObject[key] = undefined;
                 return output;
             }
-                currentObject[key] = {...nextObject}
-            
+            currentObject[key] = {...nextObject}
+
         } else if(options.createUndefined) {
             if(!Number.isNaN(+keys[n+1])){
                 currentObject[key] = [];
             }else if(Array.isArray(currentObject)){
                 currentObject.push({})
+                key = currentObject.length - 1;
             }else {
                 currentObject[key] = {}
             }
         }else{
             return object;
         }
+
         currentObject = currentObject[key];
     }
     key = keys[n]
@@ -78,6 +80,12 @@ export default function index(object, path, value, options = {}){
         currentObject[key] = undefined;
     }else{
         currentObject[key] = value;
+        if(options.valid !== undefined){
+            currentObject.valid = options.valid
+        }
+        if(options.nameValid !== undefined){
+            currentObject[`${key}Valid`] = options.nameValid;
+        }
     }
     return output;
 }

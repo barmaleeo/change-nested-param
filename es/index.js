@@ -71,6 +71,7 @@ function index(object, path, value) {
         currentObject[key] = [];
       } else if (Array.isArray(currentObject)) {
         currentObject.push({});
+        key = currentObject.length - 1;
       } else {
         currentObject[key] = {};
       }
@@ -106,6 +107,14 @@ function index(object, path, value) {
     currentObject[key] = undefined;
   } else {
     currentObject[key] = value;
+
+    if (options.valid !== undefined) {
+      currentObject.valid = options.valid;
+    }
+
+    if (options.nameValid !== undefined) {
+      currentObject["".concat(key, "Valid")] = options.nameValid;
+    }
   }
 
   return output;

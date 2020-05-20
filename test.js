@@ -13,21 +13,6 @@ const object = {
     ]}
 }
 
-const aaa = {
-    product:{
-        options:{
-            moProductBalance:{
-                store:{
-                    fromUserToStore:[
-                        {
-                            separateCredit: 'user_id',
-                        }
-                    ]
-                }
-            }
-        }
-    }
-}
 it('Должен удалиться объект с указанным индексом в массиве', () => {
     let obj = {firstKey:[[
             {
@@ -96,9 +81,10 @@ it('Должен создаться новый объект с двумя вло
         {createUndefined:true});
     chai.expect(result).to.deep.equal({firstKey:[[{secondKey:[{thirdKey:27}]}]]})
     chai.expect(result).not.equal(obj);
+
     const resultInsertBefore = index(result, 'firstKey.0.0.secondKey.*', {thirdKey:31},
         {createUndefined:true});
-    chai.expect(resultInsertBefore).to.deep.equal({firstKey:[[{secondKey:[{thirdKey:31},{thirdKey:27}]}]]})
+    chai.expect(resultInsertBefore).to.deep.equal({firstKey:[[{secondKey:[{thirdKey:31},{thirdKey:27}]}]]});
     chai.expect(resultInsertBefore).not.equal(result);
 
     const resultInsertAfter = index(resultInsertBefore, 'firstKey.0.0.secondKey.5', {thirdKey:43},
@@ -151,6 +137,29 @@ it('Должен измениться существующий ключ', () => 
 
     obj1.firstKey.secondKey[3].thirdKey = 27;
     chai.expect(result).to.deep.equal(obj1);
+});
+
+it('Должен измениться существующий ключ с валидацией', () => {
+    let obj = JSON.parse(JSON.stringify(object))
+    let result = index(obj, 'firstKey.secondKey.3.thirdKey', 27, {valid: true});
+    chai.expect(result.firstKey.secondKey[3]).to.deep.equal({thirdKey:27, b:44, c:43, valid: true})
+
+    obj = JSON.parse(JSON.stringify(object))
+    result = index(obj, 'firstKey.secondKey.3.thirdKey', 27, {nameValid: true});
+    chai.expect(result.firstKey.secondKey[3]).to.deep.equal({thirdKey:27, b:44, c:43, thirdKeyValid: true});
+});
+
+it('Должен вернуться неизмененным если не нашелся элемент массива ', () => {
+    const obj = JSON.parse(JSON.stringify(object))
+    const result = index(obj, 'firstKey.secondKey.1000.thirdKey', 27);
+    chai.expect(result).equal(obj)
+
+});
+
+it('Должен вставиться в массив', () => {
+    let obj = JSON.parse(JSON.stringify(object))
+    let result = index(obj, 'firstKey.secondKey.1000.thirdKey', 27, {createUndefined: true});
+    chai.expect(result.firstKey.secondKey[5]).to.deep.equal({thirdKey:27})
 });
 
 it('вылетает при неправильном первом ключе', () => {
