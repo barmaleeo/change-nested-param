@@ -41,12 +41,16 @@ function index(object, path, value) {
 
   currentObject = output;
   var minus = false;
+  var plus = false;
 
   for (n = 0; n < keys.length - 1; n += 1) {
     key = keys[n];
 
     if (key.substring(0, 1) === '-') {
       minus = true;
+      key = key.substring(1);
+    } else if (key.substring(0, 1) === '+') {
+      plus = true;
       key = key.substring(1);
     }
 
@@ -55,6 +59,11 @@ function index(object, path, value) {
     if (Array.isArray(nextObject)) {
       if (minus) {
         currentObject.splice(key, 1);
+        return output;
+      }
+
+      if (plus) {
+        currentObject.splice(key, 0, value);
         return output;
       }
 
@@ -87,6 +96,9 @@ function index(object, path, value) {
   if (key.substring(0, 1) === '-') {
     minus = true;
     key = key.substring(1);
+  } else if (key.substring(0, 1) === '+') {
+    plus = true;
+    key = key.substring(1);
   }
 
   if (Array.isArray(currentObject)) {
@@ -96,6 +108,9 @@ function index(object, path, value) {
       }
 
       currentObject.splice(key, 1);
+    } else if (plus) {
+      currentObject.splice(key, 0, value);
+      return output;
     } else if (key === '*') {
       currentObject.unshift(value);
     } else if (currentObject[key] === undefined) {

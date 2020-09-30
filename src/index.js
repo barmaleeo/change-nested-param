@@ -20,10 +20,14 @@ export default function index(object, path, value, options = {}){
     const output = {...object}
     currentObject = output;
     let minus = false;
+    let plus = false;
     for(n = 0; n < keys.length - 1; n += 1){
         key = keys[n];
         if(key.substring(0,1) === '-'){
             minus = true;
+            key = key.substring(1);
+        }else if(key.substring(0,1) === '+'){
+            plus = true;
             key = key.substring(1);
         }
 
@@ -31,6 +35,10 @@ export default function index(object, path, value, options = {}){
         if(Array.isArray(nextObject)){
             if(minus){
                 currentObject.splice(key, 1)
+                return output;
+            }
+            if(plus){
+                currentObject.splice(key, 0, value)
                 return output;
             }
             currentObject[key] = nextObject.slice()
@@ -61,6 +69,9 @@ export default function index(object, path, value, options = {}){
     if(key.substring(0,1) === '-'){
         minus = true;
         key = key.substring(1);
+    }else if(key.substring(0,1) === '+'){
+        plus = true;
+        key = key.substring(1);
     }
 
     if(Array.isArray(currentObject)){
@@ -69,6 +80,9 @@ export default function index(object, path, value, options = {}){
                 return object;
             }
             currentObject.splice(key, 1)
+        }else if(plus){
+            currentObject.splice(key, 0, value)
+            return output;
         }else if(key === '*'){
             currentObject.unshift(value)
         }else if(currentObject[key] === undefined){

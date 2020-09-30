@@ -12,6 +12,20 @@ const object = {
         {a:55, b:54, c:53},
     ]}
 }
+it('Должен вставиться объект в указанное место  в массиве', () => {
+    let result = index(object, 'firstKey.secondKey.+2', {insertedAt: 2},
+        {createUndefined: true});
+    chai.expect(result).to.deep.equal( {
+        stableKey:{secondStableKey:{a:5, b:4, c:3}},
+        firstKey:{secondKey:[
+                {a:15, b:14, c:13},
+                {a:25, b:24, c:23},
+                {insertedAt: 2},
+                {a:35, b:34, c:33},
+                {thirdKey:12, b:44, c:43},
+                {a:55, b:54, c:53},
+            ]}})
+});
 
 it('Должен удалиться объект с указанным индексом в массиве', () => {
     let obj = {firstKey:[[
