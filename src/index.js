@@ -95,7 +95,7 @@ export default function index(object, path, value, options = {}){
     }else{
         if(options.keepInitial){
             if(currentObject[key+'Initial'] === undefined){
-                currentObject[key+'Initial'] = currentObject['key'];
+                currentObject[key+'Initial'] = currentObject[key];
             }
         }
         currentObject[key] = value;
