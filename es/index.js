@@ -121,6 +121,12 @@ function index(object, path, value) {
   } else if (minus) {
     currentObject[key] = undefined;
   } else {
+    if (options.keepInitial) {
+      if (currentObject[key + 'Initial'] === undefined) {
+        currentObject[key + 'Initial'] = currentObject['key'];
+      }
+    }
+
     currentObject[key] = value;
 
     if (options.valid !== undefined) {
