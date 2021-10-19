@@ -12,6 +12,28 @@ const object = {
         {a:55, b:54, c:53},
     ]}
 }
+it('Должен измениться объект c callback и все объекты по пути', () => {
+    const result = index(object, 'firstKey.secondKey.3.thirdKey', 27, {callback:(obj, key)=>{
+            obj[key+'Old'] = obj[key];
+            obj[key] = 27;
+            obj[key+'Change'] = true;
+        }});
+    chai.expect(result).not.equal(object)
+    chai.expect(result.stableKey.secondStableKey).equal(object.stableKey.secondStableKey)
+    chai.expect(result.stableKey).equal(object.stableKey)
+    chai.expect(result.firstKey).not.equal(object.firstKey)
+    chai.expect(result.firstKey.secondKey).not.equal(object.firstKey.secondKey)
+    chai.expect(result.firstKey.secondKey[2]).equal(object.firstKey.secondKey[2])
+    chai.expect(result.firstKey.secondKey[4]).equal(object.firstKey.secondKey[4])
+    chai.expect(result.firstKey.secondKey[3]).not.equal(object.firstKey.secondKey[3])
+    chai.expect(result.firstKey.secondKey[3].b).equal(object.firstKey.secondKey[3].b)
+    chai.expect(result.firstKey.secondKey[3].c).equal(object.firstKey.secondKey[3].c)
+    chai.expect(result.firstKey.secondKey[3].thirdKey).equal(27)
+    chai.expect(result.firstKey.secondKey[3].thirdKeyOld).equal(12)
+    chai.expect(result.firstKey.secondKey[3].thirdKeyChange).equal(true)
+});
+
+
 it('Должен вставиться объект в указанное место  в массиве', () => {
     let result = index(object, 'firstKey.secondKey.+2', {insertedAt: 2},
         {createUndefined: true});

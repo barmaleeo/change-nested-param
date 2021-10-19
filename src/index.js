@@ -92,19 +92,22 @@ export default function index(object, path, value, options = {}){
         }
     }else if(minus){
         currentObject[key] = undefined;
-    }else{
-        if(options.keepInitial){
-            if(currentObject[`${key}Initial`] === undefined){
+    }else if(options.callback && typeof options.callback === 'function'){
+            options.callback(currentObject, key)
+    }else {
+        if (options.keepInitial) {
+            if (currentObject[`${key}Initial`] === undefined) {
                 currentObject[`${key}Initial`] = currentObject[key];
             }
         }
         currentObject[key] = value;
-        if(options.valid !== undefined){
+        if (options.valid !== undefined) {
             currentObject.valid = options.valid
         }
-        if(options.nameValid !== undefined){
+        if (options.nameValid !== undefined) {
             currentObject[`${key}Valid`] = options.nameValid;
         }
     }
+
     return output;
 }
