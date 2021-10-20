@@ -73,8 +73,9 @@ export default function index(object, path, value, options = {}){
         plus = true;
         key = key.substring(1);
     }
-
-    if(Array.isArray(currentObject)){
+    if(options.callback && typeof options.callback === 'function'){
+        options.callback(currentObject, key)
+    }else if(Array.isArray(currentObject)){
         if(minus){
             if(currentObject[key] === undefined){
                 return object;
@@ -92,8 +93,6 @@ export default function index(object, path, value, options = {}){
         }
     }else if(minus){
         currentObject[key] = undefined;
-    }else if(options.callback && typeof options.callback === 'function'){
-            options.callback(currentObject, key)
     }else {
         if (options.keepInitial) {
             if (currentObject[`${key}Initial`] === undefined) {
